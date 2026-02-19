@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -18,7 +19,7 @@
     --primary: 271 81.3333% 55.8824%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 263 25% 14%;
+    --secondary: 20 14.2857% 4.1176%;
     --secondary-foreground: 210 40% 96.0784%;
 
     --muted: 240 12% 12%;
@@ -50,6 +51,10 @@
     --glow-soft: 263 60% 40%;
     --surface-glass: 260 20% 10%;
     --gold: 45 80% 60%;
+    --font-sans: Raleway, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  }
+  .dark {
+    --font-sans: Raleway, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
   }
 }
 
