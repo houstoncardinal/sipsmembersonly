@@ -35,6 +35,12 @@ const MOCK_USERS: Record<string, { password: string; role: UserRole; name: strin
     name: "Member",
     phrase: "inner-circle",
   },
+  "cardinal.hunain@gmail.com": {
+    password: "Password123!",
+    role: "admin",
+    name: "Cardinal",
+    phrase: "inner-circle",
+  },
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
