@@ -26,8 +26,8 @@ interface AuthContextType {
 
 const PRIVATE_SALT = "SGR-SYRUP-PRIVATE-VAULT-2025";
 
-/** Admin master key — never rotates. Change this to something secret before going live. */
-export const ADMIN_MASTER_KEY = "SGR-VAULT-ADMIN-7X4K-2025";
+/** Admin master key — never rotates. */
+export const ADMIN_MASTER_KEY = "iDOwh4t1w4nt";
 
 /** djb2 hash — deterministic 32-bit integer from a string */
 function djb2Hash(str: string): number {
@@ -70,9 +70,9 @@ export function getHoursUntilReset(): number {
 // ─── Mock Users ──────────────────────────────────────────────────────────────
 
 const MOCK_USERS: Record<string, { role: UserRole; name: string }> = {
-  "admin@sipsgettinreal.test": { role: "admin", name: "Admin" },
-  "member@sipsgettinreal.test": { role: "member", name: "Member" },
+  "sipsgettingr@gmail.com": { role: "admin", name: "Sips Admin" },
   "cardinal.hunain@gmail.com": { role: "admin", name: "Cardinal" },
+  "member@sipsgettinreal.test": { role: "member", name: "Member" },
   "vip@example.com": { role: "member", name: "VIP Customer" },
   "inactive@example.com": { role: "member", name: "Inactive User" },
 };
