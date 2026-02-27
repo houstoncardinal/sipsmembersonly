@@ -188,7 +188,7 @@ export default function Auth() {
               filter: "drop-shadow(0 0 16px rgba(180,32,240,0.5))",
             }}
           >
-            Sips Gettin' Real
+            Sips Getting Real
           </h1>
 
           <div className="flex items-center justify-center gap-2">

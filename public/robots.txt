@@ -1,4 +1,4 @@
-# Sips Gettin' Real — Invite-Only Private Platform
+# Sips Getting Real — Invite-Only Private Platform
 # No indexing permitted under any circumstances.
 
 User-agent: *

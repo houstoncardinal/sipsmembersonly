@@ -94,7 +94,7 @@ export default function AdminInvites() {
     const loginUrl = `${window.location.origin}/auth`;
     return `Hi ${preview.recipientName},
 
-You've been personally invited to join Sips Gettin' Real — an exclusive members-only platform.
+You've been personally invited to join Sips Getting Real — an exclusive members-only platform.
 
 Here are your login credentials:
 
@@ -110,11 +110,11 @@ Your access code is private, unique to you, and single-use — a new one will be
 
 Welcome to the circle.
 
-— Sips Gettin' Real`;
+— Sips Getting Real`;
   };
 
   const getMailtoLink = (preview: EmailPreview) => {
-    const subject = encodeURIComponent("You're invited to Sips Gettin' Real 🍇");
+    const subject = encodeURIComponent("You're invited to Sips Getting Real 🍇");
     const body = encodeURIComponent(getEmailBody(preview));
     return `mailto:${preview.recipientEmail}?subject=${subject}&body=${body}`;
   };

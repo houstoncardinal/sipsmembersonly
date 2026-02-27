@@ -1,4 +1,4 @@
-# Sips Gettin' Real - Private Members-Only Luxury E-Commerce Platform
+# Sips Getting Real - Private Members-Only Luxury E-Commerce Platform
 
 A multi-million-dollar quality, **PRIVATE MEMBERS-ONLY** luxury e-commerce web application with crypto-only payments (Bitcoin).
 
@@ -6,7 +6,7 @@ A multi-million-dollar quality, **PRIVATE MEMBERS-ONLY** luxury e-commerce web a
 
 ## 🎨 Brand & Design
 
-**Brand Name:** Sips Gettin' Real
+**Brand Name:** Sips Getting Real
 
 ### Color System
 - **Primary Purple:** `#6D28D9`
@@ -387,4 +387,4 @@ src/
 
 **Built with ❤️ for the Inner Circle**
 
-*Sips Gettin' Real - Where Luxury Meets Privacy*
+*Sips Getting Real - Where Luxury Meets Privacy*

@@ -1,4 +1,4 @@
-# 🔐 Sips Gettin' Real - Privacy-First Security Stack
+# 🔐 Sips Getting Real - Privacy-First Security Stack
 
 ## **Zero-Knowledge Architecture | No IP Logging | Anonymous by Design**
 
@@ -303,7 +303,7 @@ interface Message {
 
 ## 📋 **Privacy Comparison**
 
-| Feature | Traditional E-commerce | Sips Gettin' Real |
+| Feature | Traditional E-commerce | Sips Getting Real |
 |---------|------------------------|-------------------|
 | **IP Logging** | ✅ Yes | ❌ **Never** |
 | **Device Tracking** | ✅ Yes | ❌ **Never** |

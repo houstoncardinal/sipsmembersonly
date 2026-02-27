@@ -97,7 +97,7 @@ function getEmailBody(data: EmailModalData): string {
 
 ${data.isNewCode
     ? "Your previous access code was used to log in. Here is your new private access code for next time:"
-    : "Here is your private access code to log in to Sips Gettin' Real:"}
+    : "Here is your private access code to log in to Sips Getting Real:"}
 
   Email: ${data.memberEmail}
   Access Code: ${data.code}
@@ -111,7 +111,7 @@ Your code is single-use and will be replaced with a fresh one after each login.
 
 Welcome to the circle.
 
-— Sips Gettin' Real`;
+— Sips Getting Real`;
 }
 
 function CodeCell({
@@ -529,7 +529,7 @@ export default function AdminMembers() {
 
                 <div className="flex gap-3">
                   <a
-                    href={`mailto:${emailModal.memberEmail}?subject=${encodeURIComponent("Your new access code — Sips Gettin' Real")}&body=${encodeURIComponent(getEmailBody(emailModal))}`}
+                    href={`mailto:${emailModal.memberEmail}?subject=${encodeURIComponent("Your new access code — Sips Getting Real")}&body=${encodeURIComponent(getEmailBody(emailModal))}`}
                     className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white shadow-lg shadow-purple-500/30"
                     style={{ background: "linear-gradient(135deg, #7c00d4, #d400aa)" }}
                   >

@@ -28,7 +28,7 @@ const INITIAL_MESSAGES: Message[] = [
     id: "1",
     from: "admin@sipsgettinreal.test",
     to: "member@sipsgettinreal.test",
-    subject: "Welcome to Sips Gettin' Real",
+    subject: "Welcome to Sips Getting Real",
     content: "Welcome to our exclusive members-only platform! If you have any questions about your orders or our products, feel free to reach out.",
     timestamp: new Date().toISOString(),
     read: false,

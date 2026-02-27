@@ -739,7 +739,7 @@ export default function Index() {
                 "drop-shadow(0 0 30px rgba(180,32,240,0.6)) drop-shadow(0 0 60px rgba(220,0,160,0.25))",
             }}
           >
-            Sips Gettin' Real
+            Sips Getting Real
           </h1>
 
           {/* Divider */}
