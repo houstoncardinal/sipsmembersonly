@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth, generateWeeklyCode, getHoursUntilReset } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { useInvite } from "@/context/InviteContext";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,7 +20,6 @@ import {
   EyeOff,
   X,
   Send,
-  Clock,
   ShieldCheck,
 } from "lucide-react";
 
@@ -31,7 +30,7 @@ interface EmailPreview {
 }
 
 export default function AdminInvites() {
-  const { user, registerMember } = useAuth();
+  const { user, registerMember, initMemberCode, memberCodes } = useAuth();
   const { inviteCodes, createInviteCode, deactivateInviteCode, deleteInviteCode } = useInvite();
   const navigate = useNavigate();
 
@@ -70,18 +69,17 @@ export default function AdminInvites() {
       const email = inviteEmail.trim().toLowerCase();
       const name = inviteName.trim() || email;
 
-      // 1. Create the invite code
+      // 1. Create the invite record
       createInviteCode("single", email);
 
-      // 2. Register them in the auth system so they can actually log in
+      // 2. Register them so they can log in
       registerMember(email, name);
 
-      // 3. Show the email preview with their weekly code
-      setEmailPreview({
-        recipientEmail: email,
-        recipientName: name,
-        weeklyCode: generateWeeklyCode(email),
-      });
+      // 3. Generate their unique access code (or retrieve existing)
+      const code = initMemberCode(email);
+
+      // 4. Show email preview with their code
+      setEmailPreview({ recipientEmail: email, recipientName: name, weeklyCode: code });
     } else {
       createInviteCode("multi", undefined, inviteMaxUses);
     }
@@ -94,8 +92,6 @@ export default function AdminInvites() {
 
   const getEmailBody = (preview: EmailPreview) => {
     const loginUrl = `${window.location.origin}/auth`;
-    const hoursLeft = getHoursUntilReset();
-    const daysLeft = Math.ceil(hoursLeft / 24);
     return `Hi ${preview.recipientName},
 
 You've been personally invited to join Sips Gettin' Real — an exclusive members-only platform.
@@ -110,9 +106,7 @@ To get in:
   2. Select "Member Access"
   3. Enter your email and the access code above
 
-Your access code is private and unique to you. It automatically renews every week for your security — your current code is valid for the next ${daysLeft} day${daysLeft !== 1 ? "s" : ""}.
-
-When your code resets, reply to this email and we'll send you the new one right away.
+Your access code is private, unique to you, and single-use — a new one will be sent to you automatically after each login.
 
 Welcome to the circle.
 
@@ -376,30 +370,31 @@ Welcome to the circle.
                         {invite.email || <span className="text-slate-400">—</span>}
                       </td>
                       <td className="p-4">
-                        {invite.email ? (
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-sm font-bold" style={{ color: "#7c00d4" }}>
-                                {generateWeeklyCode(invite.email)}
-                              </span>
-                              <button
-                                onClick={() => copyField(generateWeeklyCode(invite.email!), `wc-${invite.id}`)}
-                                className="p-1 rounded-md hover:bg-purple-50 transition-colors"
-                                title="Copy access code"
-                              >
-                                {copiedField === `wc-${invite.id}` ? (
-                                  <Check className="w-3 h-3 text-green-500" />
-                                ) : (
-                                  <Copy className="w-3 h-3 text-slate-400" />
-                                )}
-                              </button>
+                        {invite.email ? (() => {
+                          const entry = memberCodes[invite.email.toLowerCase()];
+                          if (!entry) return <span className="text-xs text-slate-400 italic">not yet generated</span>;
+                          return (
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono text-sm font-bold" style={{ color: "#7c00d4" }}>
+                                  {entry.currentCode}
+                                </span>
+                                <button
+                                  onClick={() => copyField(entry.currentCode, `wc-${invite.id}`)}
+                                  className="p-1 rounded-md hover:bg-purple-50 transition-colors"
+                                  title="Copy access code"
+                                >
+                                  {copiedField === `wc-${invite.id}` ? (
+                                    <Check className="w-3 h-3 text-green-500" />
+                                  ) : (
+                                    <Copy className="w-3 h-3 text-slate-400" />
+                                  )}
+                                </button>
+                              </div>
+                              <p className="text-[10px] text-slate-400">Single-use · rotates on login</p>
                             </div>
-                            <div className="flex items-center gap-1 text-[10px] text-slate-400">
-                              <Clock className="w-2.5 h-2.5" />
-                              Resets in {Math.ceil(getHoursUntilReset() / 24)}d
-                            </div>
-                          </div>
-                        ) : (
+                          );
+                        })() : (
                           <span className="text-xs text-slate-400 italic">n/a</span>
                         )}
                       </td>
@@ -428,13 +423,13 @@ Welcome to the circle.
                       </td>
                       <td className="p-4 text-right">
                         <div className="flex items-center justify-end gap-1">
-                          {invite.email && invite.isActive && (
+                          {invite.email && invite.isActive && memberCodes[invite.email.toLowerCase()] && (
                             <button
                               onClick={() =>
                                 setEmailPreview({
                                   recipientEmail: invite.email!,
                                   recipientName: invite.email!,
-                                  weeklyCode: generateWeeklyCode(invite.email!),
+                                  weeklyCode: memberCodes[invite.email!.toLowerCase()].currentCode,
                                 })
                               }
                               className="p-2 rounded-lg hover:bg-purple-50 transition-colors"
@@ -534,9 +529,8 @@ Welcome to the circle.
                     <p className="font-mono text-2xl font-bold tracking-widest" style={{ color: "#7c00d4" }}>
                       {emailPreview.weeklyCode}
                     </p>
-                    <p className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
-                      <Clock className="w-2.5 h-2.5" />
-                      Resets in {Math.ceil(getHoursUntilReset() / 24)}d {getHoursUntilReset() % 24}h
+                    <p className="text-[10px] text-slate-400 mt-1">
+                      Single-use · rotates after each login
                     </p>
                   </div>
                   <button

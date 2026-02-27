@@ -15,6 +15,14 @@ export interface RegisteredMember {
   registeredAt: string;
 }
 
+/** Per-member single-use code entry stored in localStorage */
+export interface MemberCodeEntry {
+  currentCode: string;
+  generatedAt: string;
+  lastUsedAt?: string;   // set when they log in (code was consumed)
+  pendingNotify: boolean; // true after login — new code not yet sent to member
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -24,60 +32,35 @@ interface AuthContextType {
   isLocked: boolean;
   sessionExpiresAt: number | null;
   extendSession: () => void;
-  /** Register a new member email into the auth system (called when sending an invite) */
+  /** Register a new member email into the auth system */
   registerMember: (email: string, name: string) => void;
-  /** All dynamically registered members */
   registeredMembers: RegisteredMember[];
+  /** All stored per-member code entries */
+  memberCodes: Record<string, MemberCodeEntry>;
+  /** Create an initial code for a member (called when invite is sent). Returns the code. */
+  initMemberCode: (email: string) => string;
+  /** Mark a member's pending notify as cleared (after admin sends new code) */
+  clearNotify: (email: string) => void;
   /** DEV ONLY — skips all auth, logs in instantly */
   devLogin: (email?: string) => void;
 }
 
-// ─── Weekly Code System ──────────────────────────────────────────────────────
+// ─── Code Generation ──────────────────────────────────────────────────────────
 
-const PRIVATE_SALT = "SGR-SYRUP-PRIVATE-VAULT-2025";
-
-/** Admin master key — never rotates. */
+/** Admin master key — fixed, never rotates */
 export const ADMIN_MASTER_KEY = "iDOwh4t1w4nt";
 
-/** djb2 hash — deterministic 32-bit integer from a string */
-function djb2Hash(str: string): number {
-  let hash = 5381;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
-    hash = hash | 0;
-  }
-  return Math.abs(hash);
-}
-
-/** Week number since Unix epoch (increments every 7 days) */
-function getCurrentWeekNumber(): number {
-  return Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
-}
-
-/**
- * Generates a deterministic weekly access code for a member email.
- * Format: XXXX-XXXX (8 safe alphanumeric chars, no I/O/0/1 for clarity).
- * Rotates automatically every 7 days. weekOffset previews next/prev week.
- */
-export function generateWeeklyCode(email: string, weekOffset = 0): string {
-  const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // 32 safe chars
-  const weekNum = getCurrentWeekNumber() + weekOffset;
-  const input = `${email.toLowerCase()}|${weekNum}|${PRIVATE_SALT}`;
-  const h1 = djb2Hash(input);
-  const h2 = djb2Hash(input + "|b");
-  const part1 = Array.from({ length: 4 }, (_, i) => CHARS[(h1 >> (i * 5)) & 31]).join("");
-  const part2 = Array.from({ length: 4 }, (_, i) => CHARS[(h2 >> (i * 5)) & 31]).join("");
+/** Generate a cryptographically random XXXX-XXXX access code */
+export function generateRandomCode(): string {
+  const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // 32 safe chars — no I/O/0/1
+  const bytes = new Uint8Array(8);
+  crypto.getRandomValues(bytes);
+  const part1 = Array.from(bytes.slice(0, 4), (b) => CHARS[b % CHARS.length]).join("");
+  const part2 = Array.from(bytes.slice(4, 8), (b) => CHARS[b % CHARS.length]).join("");
   return `${part1}-${part2}`;
 }
 
-/** Returns hours until the current weekly code resets (max 168h) */
-export function getHoursUntilReset(): number {
-  const week = getCurrentWeekNumber();
-  const nextWeekMs = (week + 1) * 7 * 24 * 60 * 60 * 1000;
-  return Math.ceil((nextWeekMs - Date.now()) / (60 * 60 * 1000));
-}
-
-// ─── Built-in Users (admins + seed members) ──────────────────────────────────
+// ─── Built-in Users ───────────────────────────────────────────────────────────
 
 const MOCK_USERS: Record<string, { role: UserRole; name: string }> = {
   "sipsgettingr@gmail.com": { role: "admin", name: "Sips Admin" },
@@ -87,9 +70,9 @@ const MOCK_USERS: Record<string, { role: UserRole; name: string }> = {
   "inactive@example.com": { role: "member", name: "Inactive User" },
 };
 
-// ─── Session ─────────────────────────────────────────────────────────────────
+// ─── Session ──────────────────────────────────────────────────────────────────
 
-const SESSION_DURATION = 20 * 60 * 1000; // 20 minutes
+const SESSION_DURATION = 20 * 60 * 1000;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -99,24 +82,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [lockUntil, setLockUntil] = useState<number | null>(null);
   const [sessionExpiresAt, setSessionExpiresAt] = useState<number | null>(null);
 
-  // Dynamic member registry — persisted to localStorage
+  // Dynamic member registry
   const [registeredMembers, setRegisteredMembers] = useState<RegisteredMember[]>(() => {
-    try {
-      const saved = localStorage.getItem("memberRegistry");
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
+    try { return JSON.parse(localStorage.getItem("memberRegistry") || "[]"); }
+    catch { return []; }
+  });
+
+  // Per-member single-use code store
+  const [memberCodes, setMemberCodes] = useState<Record<string, MemberCodeEntry>>(() => {
+    try { return JSON.parse(localStorage.getItem("memberCodes") || "{}"); }
+    catch { return {}; }
   });
 
   const isLocked = lockUntil !== null && Date.now() < lockUntil;
 
-  // Persist member registry on changes
+  // Persist registry
   useEffect(() => {
     localStorage.setItem("memberRegistry", JSON.stringify(registeredMembers));
   }, [registeredMembers]);
 
-  // Restore existing session on mount
+  // Persist code store
+  useEffect(() => {
+    localStorage.setItem("memberCodes", JSON.stringify(memberCodes));
+  }, [memberCodes]);
+
+  // Restore session
   useEffect(() => {
     const saved = localStorage.getItem("authSession");
     if (saved) {
@@ -134,7 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  // Persist session when user logs in
+  // Persist session
   useEffect(() => {
     if (user) {
       const expiresAt = Date.now() + SESSION_DURATION;
@@ -146,7 +136,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user]);
 
-  // Auto-logout when session expires
+  // Auto-logout on expiry
   useEffect(() => {
     if (!sessionExpiresAt) return;
     const interval = setInterval(() => {
@@ -164,23 +154,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user]);
 
-  /**
-   * Register a new member email so they can log in with their weekly code.
-   * Called automatically when an admin sends an invite to a specific email.
-   */
+  /** Add a new member to the auth registry so they can log in */
   const registerMember = useCallback((email: string, name: string) => {
     const emailLower = email.toLowerCase().trim();
     setRegisteredMembers((prev) => {
-      if (prev.find((m) => m.email === emailLower)) return prev; // already registered
+      if (prev.find((m) => m.email === emailLower)) return prev;
       return [...prev, { email: emailLower, name: name || emailLower, registeredAt: new Date().toISOString() }];
     });
   }, []);
 
   /**
-   * Unified login for members and admins.
-   * Checks MOCK_USERS first, then the dynamic member registry.
-   * - Admins: code must equal ADMIN_MASTER_KEY
-   * - Members: code must equal generateWeeklyCode(email) for this week
+   * Generate and store an initial access code for a member.
+   * If one already exists, returns the current one unchanged.
+   * Call this when sending an invite — returns the code to include in the email.
+   */
+  const initMemberCode = useCallback(
+    (email: string): string => {
+      const emailLower = email.toLowerCase().trim();
+      const existing = memberCodes[emailLower];
+      if (existing) return existing.currentCode;
+      const code = generateRandomCode();
+      setMemberCodes((prev) => ({
+        ...prev,
+        [emailLower]: { currentCode: code, generatedAt: new Date().toISOString(), pendingNotify: false },
+      }));
+      return code;
+    },
+    [memberCodes]
+  );
+
+  /** Clear the pending-notify flag after admin sends the new code to the member */
+  const clearNotify = useCallback((email: string) => {
+    const emailLower = email.toLowerCase().trim();
+    setMemberCodes((prev) => {
+      if (!prev[emailLower]) return prev;
+      return { ...prev, [emailLower]: { ...prev[emailLower], pendingNotify: false } };
+    });
+  }, []);
+
+  /**
+   * Unified login.
+   * - Admin emails: verify against ADMIN_MASTER_KEY (never rotates).
+   * - Member emails: verify against their stored single-use code,
+   *   then immediately rotate to a fresh code and flag pendingNotify.
    */
   const login = useCallback(
     async (email: string, code: string): Promise<boolean> => {
@@ -188,7 +204,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await new Promise((r) => setTimeout(r, 700));
       const emailLower = email.toLowerCase().trim();
 
-      // Look up in built-in users first, then dynamic registry
       const builtIn = MOCK_USERS[emailLower];
       const registered = registeredMembers.find((m) => m.email === emailLower);
       const u: { role: UserRole; name: string } | null =
@@ -196,8 +211,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (u) {
         const isAdmin = u.role === "admin";
-        const expected = isAdmin ? ADMIN_MASTER_KEY : generateWeeklyCode(emailLower);
-        if (code.trim().toUpperCase() === expected.toUpperCase()) {
+        const storedEntry = memberCodes[emailLower];
+        const expected = isAdmin ? ADMIN_MASTER_KEY : storedEntry?.currentCode ?? "";
+
+        if (expected && code.trim().toUpperCase() === expected.toUpperCase()) {
           setUser({
             id: `${u.role}-${emailLower.replace(/[^a-z0-9]/g, "-")}`,
             email: emailLower,
@@ -205,6 +222,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             name: u.name,
           });
           setAttempts(0);
+
+          // Rotate code immediately after successful member login
+          if (!isAdmin) {
+            const newCode = generateRandomCode();
+            setMemberCodes((prev) => ({
+              ...prev,
+              [emailLower]: {
+                currentCode: newCode,
+                generatedAt: new Date().toISOString(),
+                lastUsedAt: new Date().toISOString(),
+                pendingNotify: true, // admin needs to send this to member
+              },
+            }));
+          }
           return true;
         }
       }
@@ -214,10 +245,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (newAttempts >= 5) setLockUntil(Date.now() + 15 * 60 * 1000);
       return false;
     },
-    [isLocked, attempts, registeredMembers]
+    [isLocked, attempts, registeredMembers, memberCodes]
   );
 
-  /** DEV ONLY — bypasses all auth checks */
+  /** DEV ONLY */
   const devLogin = useCallback((email = "cardinal.hunain@gmail.com") => {
     const emailLower = email.toLowerCase();
     const u = MOCK_USERS[emailLower];
@@ -246,6 +277,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         extendSession,
         registerMember,
         registeredMembers,
+        memberCodes,
+        initMemberCode,
+        clearNotify,
         devLogin,
       }}
     >
