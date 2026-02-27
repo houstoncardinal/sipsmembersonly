@@ -9,6 +9,12 @@ export interface User {
   name: string;
 }
 
+export interface RegisteredMember {
+  email: string;
+  name: string;
+  registeredAt: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -18,6 +24,10 @@ interface AuthContextType {
   isLocked: boolean;
   sessionExpiresAt: number | null;
   extendSession: () => void;
+  /** Register a new member email into the auth system (called when sending an invite) */
+  registerMember: (email: string, name: string) => void;
+  /** All dynamically registered members */
+  registeredMembers: RegisteredMember[];
   /** DEV ONLY — skips all auth, logs in instantly */
   devLogin: (email?: string) => void;
 }
@@ -67,7 +77,7 @@ export function getHoursUntilReset(): number {
   return Math.ceil((nextWeekMs - Date.now()) / (60 * 60 * 1000));
 }
 
-// ─── Mock Users ──────────────────────────────────────────────────────────────
+// ─── Built-in Users (admins + seed members) ──────────────────────────────────
 
 const MOCK_USERS: Record<string, { role: UserRole; name: string }> = {
   "sipsgettingr@gmail.com": { role: "admin", name: "Sips Admin" },
@@ -89,7 +99,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [lockUntil, setLockUntil] = useState<number | null>(null);
   const [sessionExpiresAt, setSessionExpiresAt] = useState<number | null>(null);
 
+  // Dynamic member registry — persisted to localStorage
+  const [registeredMembers, setRegisteredMembers] = useState<RegisteredMember[]>(() => {
+    try {
+      const saved = localStorage.getItem("memberRegistry");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
   const isLocked = lockUntil !== null && Date.now() < lockUntil;
+
+  // Persist member registry on changes
+  useEffect(() => {
+    localStorage.setItem("memberRegistry", JSON.stringify(registeredMembers));
+  }, [registeredMembers]);
 
   // Restore existing session on mount
   useEffect(() => {
@@ -140,7 +165,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user]);
 
   /**
+   * Register a new member email so they can log in with their weekly code.
+   * Called automatically when an admin sends an invite to a specific email.
+   */
+  const registerMember = useCallback((email: string, name: string) => {
+    const emailLower = email.toLowerCase().trim();
+    setRegisteredMembers((prev) => {
+      if (prev.find((m) => m.email === emailLower)) return prev; // already registered
+      return [...prev, { email: emailLower, name: name || emailLower, registeredAt: new Date().toISOString() }];
+    });
+  }, []);
+
+  /**
    * Unified login for members and admins.
+   * Checks MOCK_USERS first, then the dynamic member registry.
    * - Admins: code must equal ADMIN_MASTER_KEY
    * - Members: code must equal generateWeeklyCode(email) for this week
    */
@@ -149,7 +187,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (isLocked) return false;
       await new Promise((r) => setTimeout(r, 700));
       const emailLower = email.toLowerCase().trim();
-      const u = MOCK_USERS[emailLower];
+
+      // Look up in built-in users first, then dynamic registry
+      const builtIn = MOCK_USERS[emailLower];
+      const registered = registeredMembers.find((m) => m.email === emailLower);
+      const u: { role: UserRole; name: string } | null =
+        builtIn ?? (registered ? { role: "member", name: registered.name } : null);
 
       if (u) {
         const isAdmin = u.role === "admin";
@@ -171,7 +214,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (newAttempts >= 5) setLockUntil(Date.now() + 15 * 60 * 1000);
       return false;
     },
-    [isLocked, attempts]
+    [isLocked, attempts, registeredMembers]
   );
 
   /** DEV ONLY — bypasses all auth checks */
@@ -201,6 +244,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLocked,
         sessionExpiresAt,
         extendSession,
+        registerMember,
+        registeredMembers,
         devLogin,
       }}
     >
