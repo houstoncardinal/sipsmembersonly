@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useInvite } from "@/context/InviteContext";
@@ -9,6 +9,7 @@ import {
   Plus,
   Copy,
   Check,
+  CheckCircle2,
   Trash2,
   XCircle,
   Mail,
@@ -37,9 +38,9 @@ export default function AdminInvites() {
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
 
-  useState(() => {
+  useEffect(() => {
     if (user?.role !== "admin") navigate("/dashboard");
-  });
+  }, [user, navigate]);
 
   if (user?.role !== "admin") return null;
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DashboardLayout from "@/components/layout/DashboardLayout";
@@ -108,9 +108,9 @@ export default function AdminSecurity() {
   const [eventFilter, setEventFilter] = useState("all");
   const [timeRange, setTimeRange] = useState("24h");
 
-  useState(() => {
+  useEffect(() => {
     if (user?.role !== "admin") navigate("/dashboard");
-  });
+  }, [user, navigate]);
 
   if (user?.role !== "admin") return null;
 

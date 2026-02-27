@@ -27,8 +27,8 @@ import {
 } from "lucide-react";
 
 const mockMembers = [
-  { id: "1", email: "admin@sipsgettinreal.test", role: "admin", status: "active", lastLogin: "2025-02-19", joinedAt: "2025-01-01", orders: 15, spent: 12500 },
-  { id: "2", email: "member@sipsgettinreal.test", role: "member", status: "active", lastLogin: "2025-02-18", joinedAt: "2025-01-15", orders: 3, spent: 2100 },
+  { id: "1", name: "Sips Admin", email: "sipsgettingr@gmail.com", role: "admin", status: "active", lastLogin: "2025-02-19", joinedAt: "2025-01-01", orders: 15, spent: 12500 },
+  { id: "2", name: "Member User", email: "member@sipsgettinreal.test", role: "member", status: "active", lastLogin: "2025-02-18", joinedAt: "2025-01-15", orders: 3, spent: 2100 },
   { id: "3", email: "vip@example.com", role: "member", status: "active", lastLogin: "2025-02-17", joinedAt: "2025-02-01", orders: 1, spent: 4500 },
 ];
 
@@ -49,9 +49,9 @@ export default function Admin() {
   const { inviteCodes } = useInvite();
   const navigate = useNavigate();
 
-  useState(() => {
+  useEffect(() => {
     if (user?.role !== "admin") navigate("/dashboard");
-  });
+  }, [user, navigate]);
 
   if (user?.role !== "admin") return null;
 

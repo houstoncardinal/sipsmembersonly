@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DashboardLayout from "@/components/layout/DashboardLayout";
@@ -55,9 +55,9 @@ export default function AdminProducts() {
     gradient: "from-purple-900/40 via-amber-900/20 to-black/60",
   });
 
-  useState(() => {
+  useEffect(() => {
     if (user?.role !== "admin") navigate("/dashboard");
-  });
+  }, [user, navigate]);
 
   if (user?.role !== "admin") return null;
 

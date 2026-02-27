@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DashboardLayout from "@/components/layout/DashboardLayout";
@@ -129,9 +129,9 @@ export default function AdminOrders() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [dateRange, setDateRange] = useState("7d");
 
-  useState(() => {
+  useEffect(() => {
     if (user?.role !== "admin") navigate("/dashboard");
-  });
+  }, [user, navigate]);
 
   if (user?.role !== "admin") return null;
 
