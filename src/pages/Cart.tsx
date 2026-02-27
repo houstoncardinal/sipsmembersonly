@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { useCart } from "@/context/CartContext";
 import { formatBtc, usdToBtc } from "@/data/products";
-import { Minus, Plus, Trash2, Bitcoin, ShoppingBag } from "lucide-react";
+import { Minus, Plus, Trash2, Bitcoin, ShoppingBag, Truck, ShieldCheck, Clock } from "lucide-react";
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, total, itemCount } = useCart();
@@ -12,13 +12,19 @@ export default function Cart() {
     return (
       <DashboardLayout>
         <div className="flex flex-col items-center justify-center py-32 text-center">
-          <ShoppingBag className="w-12 h-12 text-muted-foreground/30 mb-4" />
-          <h2 className="font-serif text-2xl text-foreground mb-2">Your Cart is Empty</h2>
-          <p className="text-sm text-muted-foreground font-sans mb-6">
-            Browse the collection and add some exclusive items.
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center mb-6"
+          >
+            <ShoppingBag className="w-12 h-12 text-slate-400" />
+          </motion.div>
+          <h2 className="font-serif text-3xl text-slate-900 mb-3">Your Cart is Empty</h2>
+          <p className="text-slate-600 mb-8 max-w-md">
+            Browse our exclusive collection and add some luxury items to your cart.
           </p>
-          <Link to="/dashboard" className="btn-luxury text-primary-foreground">
-            Browse Store
+          <Link to="/dashboard" className="gradient-primary text-white px-8 py-4 rounded-xl font-sans font-semibold uppercase tracking-wider shadow-xl shadow-purple-500/30 hover:shadow-purple-500/50 transition-all hover:scale-105">
+            Browse Collection
           </Link>
         </div>
       </DashboardLayout>
@@ -27,90 +33,137 @@ export default function Cart() {
 
   return (
     <DashboardLayout>
-      <h1 className="font-serif text-3xl text-foreground mb-8 glow-text">Your Cart</h1>
-
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Items */}
-        <div className="lg:col-span-2 space-y-4">
-          {items.map((item, i) => (
-            <motion.div
-              key={item.product.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="glass rounded-xl p-5 flex gap-5"
-            >
-              <div className={`w-20 h-20 rounded-lg bg-gradient-to-br ${item.product.gradient} flex-shrink-0`} />
-              <div className="flex-1 min-w-0">
-                <h3 className="font-serif text-base text-foreground truncate">{item.product.name}</h3>
-                <p className="text-xs text-muted-foreground font-sans mt-1">
-                  ${item.product.price.toLocaleString()} each
-                </p>
-                <div className="flex items-center gap-3 mt-3">
-                  <button
-                    onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                    className="w-7 h-7 rounded-md glass flex items-center justify-center text-foreground/70 hover:text-foreground transition-colors"
-                  >
-                    <Minus className="w-3 h-3" />
-                  </button>
-                  <span className="text-sm font-sans font-medium text-foreground w-6 text-center">
-                    {item.quantity}
-                  </span>
-                  <button
-                    onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                    disabled={item.product.limitPerMember ? item.quantity >= item.product.limitPerMember : false}
-                    className="w-7 h-7 rounded-md glass flex items-center justify-center text-foreground/70 hover:text-foreground transition-colors disabled:opacity-30"
-                  >
-                    <Plus className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-              <div className="flex flex-col items-end justify-between">
-                <button
-                  onClick={() => removeItem(item.product.id)}
-                  className="text-muted-foreground/50 hover:text-destructive transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-                <p className="font-serif text-base text-foreground">
-                  ${(item.product.price * item.quantity).toLocaleString()}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="font-serif text-4xl text-slate-900 mb-2">Shopping Cart</h1>
+          <p className="text-slate-600">{itemCount} {itemCount === 1 ? 'item' : 'items'} in your cart</p>
         </div>
 
-        {/* Summary */}
-        <div className="glass-strong rounded-2xl p-6 glow-border h-fit sticky top-8">
-          <h2 className="font-serif text-lg text-foreground mb-6">Order Summary</h2>
-          <div className="space-y-3 mb-6">
-            <div className="flex justify-between text-sm font-sans">
-              <span className="text-muted-foreground">Items ({itemCount})</span>
-              <span className="text-foreground">${total.toLocaleString()}</span>
-            </div>
-            <div className="h-px bg-border/30" />
-            <div className="flex justify-between">
-              <span className="font-serif text-lg text-foreground">Total</span>
-              <div className="text-right">
-                <p className="font-serif text-lg text-foreground">${total.toLocaleString()}</p>
-                <p className="text-xs text-primary font-sans font-medium">
-                  ≈ {formatBtc(usdToBtc(total))} BTC
-                </p>
-              </div>
-            </div>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Cart Items */}
+          <div className="lg:col-span-2 space-y-4">
+            {items.map((item, i) => (
+              <motion.div
+                key={item.product.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-lg transition-all group"
+              >
+                <div className="flex gap-6">
+                  {/* Product Image */}
+                  <Link to={`/product/${item.product.id}`} className="flex-shrink-0">
+                    <div className="w-28 h-28 rounded-xl overflow-hidden bg-slate-100 group-hover:scale-105 transition-transform">
+                      <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover" />
+                    </div>
+                  </Link>
+
+                  {/* Product Info */}
+                  <div className="flex-1 min-w-0">
+                    <Link to={`/product/${item.product.id}`}>
+                      <h3 className="font-serif text-xl text-slate-900 group-hover:text-purple-600 transition-colors truncate">
+                        {item.product.name}
+                      </h3>
+                    </Link>
+                    <p className="text-sm text-slate-500 mt-1">{item.product.categoryLabel}</p>
+                    
+                    {/* Quantity Controls */}
+                    <div className="flex items-center gap-3 mt-4">
+                      <button
+                        onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                        className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-purple-100 hover:text-purple-600 transition-colors"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="text-lg font-bold text-slate-900 w-8 text-center">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                        disabled={item.product.limitPerMember ? item.quantity >= item.product.limitPerMember : false}
+                        className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-purple-100 hover:text-purple-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Price & Actions */}
+                  <div className="flex flex-col items-end justify-between">
+                    <button
+                      onClick={() => removeItem(item.product.id)}
+                      className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                    <div className="text-right">
+                      <p className="font-serif text-2xl font-bold text-slate-900">
+                        ${(item.product.price * item.quantity).toLocaleString()}
+                      </p>
+                      <p className="text-xs text-purple-600 font-mono">
+                        ≈ {formatBtc(usdToBtc(item.product.price * item.quantity))} BTC
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
 
-          <Link
-            to="/checkout"
-            className="btn-luxury w-full text-primary-foreground flex items-center justify-center gap-2"
-          >
-            <Bitcoin className="w-4 h-4" />
-            Pay with Bitcoin
-          </Link>
+          {/* Order Summary */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-2xl p-6 shadow-lg shadow-purple-100 border border-purple-100 sticky top-6">
+              <h2 className="font-serif text-2xl text-slate-900 mb-6">Order Summary</h2>
+              
+              <div className="space-y-4 mb-6">
+                <div className="flex justify-between text-slate-600">
+                  <span>Subtotal ({itemCount} items)</span>
+                  <span className="font-semibold text-slate-900">${total.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-slate-600">
+                  <span>Shipping</span>
+                  <span className="font-semibold text-green-600">Free</span>
+                </div>
+                <div className="h-px bg-slate-200" />
+                <div className="flex justify-between items-end">
+                  <span className="text-slate-900 font-semibold">Total</span>
+                  <div className="text-right">
+                    <p className="font-serif text-3xl font-bold text-slate-900">${total.toLocaleString()}</p>
+                    <p className="text-sm text-purple-600 font-mono">
+                      ≈ {formatBtc(usdToBtc(total))} BTC
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-          <p className="text-[10px] text-muted-foreground/50 text-center mt-4 font-sans">
-            Crypto payments only. No refunds on digital drops.
-          </p>
+              <Link
+                to="/checkout"
+                className="w-full gradient-primary text-white py-4 rounded-xl font-sans font-semibold uppercase tracking-wider shadow-xl shadow-purple-500/30 hover:shadow-purple-500/50 transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
+              >
+                <Bitcoin className="w-5 h-5" />
+                Proceed to Checkout
+              </Link>
+
+              {/* Trust Badges */}
+              <div className="mt-6 space-y-3">
+                <div className="flex items-center gap-3 text-sm text-slate-600">
+                  <Truck className="w-4 h-4 text-purple-500" />
+                  <span>Free insured shipping worldwide</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-slate-600">
+                  <ShieldCheck className="w-4 h-4 text-purple-500" />
+                  <span>Authenticity guaranteed</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-slate-600">
+                  <Clock className="w-4 h-4 text-purple-500" />
+                  <span>Secure crypto checkout</span>
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-400 text-center mt-6">
+                By completing your purchase, you agree to our terms of service.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </DashboardLayout>

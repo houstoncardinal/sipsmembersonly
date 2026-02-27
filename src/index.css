@@ -1,61 +1,145 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 240 20% 4%;
-    --foreground: 0 0% 96%;
+/* ============================================
+   PURPLE COUGH SYRUP THEME — ALWAYS DARK
+   ============================================ */
+:root {
+  /* Core Background */
+  --background: 270 32% 4%;
+  --foreground: 270 15% 92%;
 
-    --card: 260 15% 8%;
-    --card-foreground: 0 0% 96%;
+  /* Panels / Cards */
+  --card: 272 30% 7%;
+  --card-foreground: 270 12% 90%;
 
-    --popover: 260 15% 8%;
-    --popover-foreground: 0 0% 96%;
+  --popover: 272 30% 7%;
+  --popover-foreground: 270 12% 90%;
 
-    --primary: 271 81.3333% 55.8824%;
-    --primary-foreground: 0 0% 100%;
+  /* Primary — vivid neon purple */
+  --primary: 280 88% 65%;
+  --primary-foreground: 0 0% 100%;
 
-    --secondary: 20 14.2857% 4.1176%;
-    --secondary-foreground: 210 40% 96.0784%;
+  /* Secondary — dark muted purple */
+  --secondary: 270 22% 12%;
+  --secondary-foreground: 270 15% 85%;
 
-    --muted: 240 12% 12%;
-    --muted-foreground: 240 5% 55%;
+  /* Muted */
+  --muted: 270 20% 11%;
+  --muted-foreground: 270 10% 52%;
 
-    --accent: 271 81.3333% 55.8824%;
-    --accent-foreground: 0 0% 100%;
+  /* Accent — hot pink / magenta */
+  --accent: 308 78% 65%;
+  --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+  /* Destructive */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
 
-    --border: 260 12% 16%;
-    --input: 260 12% 16%;
-    --ring: 263 84% 51%;
+  /* Borders & Inputs */
+  --border: 270 28% 16%;
+  --input: 270 28% 14%;
+  --ring: 280 88% 65%;
 
-    --radius: 0.75rem;
+  --radius: 0.75rem;
 
-    --sidebar-background: 260 15% 6%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 263 84% 51%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 263 30% 16%;
-    --sidebar-accent-foreground: 0 0% 96%;
-    --sidebar-border: 260 12% 14%;
-    --sidebar-ring: 263 84% 51%;
+  /* Sidebar */
+  --sidebar-background: 270 38% 3%;
+  --sidebar-foreground: 270 12% 90%;
+  --sidebar-primary: 280 88% 65%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 270 30% 10%;
+  --sidebar-accent-foreground: 270 12% 90%;
+  --sidebar-border: 270 30% 12%;
+  --sidebar-ring: 280 88% 65%;
 
-    /* Custom luxury tokens */
-    --glow-primary: 263 84% 51%;
-    --glow-soft: 263 60% 40%;
-    --surface-glass: 260 20% 10%;
-    --gold: 45 80% 60%;
-    --font-sans: Raleway, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
-  }
-  .dark {
-    --font-sans: Raleway, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
-  }
+  /* Custom Luxury / Glow Tokens */
+  --glow-primary: 280 100% 70%;
+  --glow-soft: 308 80% 68%;
+  --glow-pink: 320 90% 65%;
+  --surface-glass: 270 30% 8%;
+  --gold: 45 80% 55%;
+
+  /* Syrup gradient stops */
+  --syrup-start: #7c00d4;
+  --syrup-mid:   #a020f0;
+  --syrup-end:   #d400aa;
+}
+
+/* Keep dark class the same as root for ThemeContext compat */
+:root.dark {
+  --background: 270 32% 4%;
+  --foreground: 270 15% 92%;
+  --card: 272 30% 7%;
+  --card-foreground: 270 12% 90%;
+  --popover: 272 30% 7%;
+  --popover-foreground: 270 12% 90%;
+  --primary: 280 88% 65%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 270 22% 12%;
+  --secondary-foreground: 270 15% 85%;
+  --muted: 270 20% 11%;
+  --muted-foreground: 270 10% 52%;
+  --accent: 308 78% 65%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 270 28% 16%;
+  --input: 270 28% 14%;
+  --ring: 280 88% 65%;
+  --sidebar-background: 270 38% 3%;
+  --sidebar-foreground: 270 12% 90%;
+  --sidebar-primary: 280 88% 65%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 270 30% 10%;
+  --sidebar-accent-foreground: 270 12% 90%;
+  --sidebar-border: 270 30% 12%;
+  --sidebar-ring: 280 88% 65%;
+  --glow-primary: 280 100% 70%;
+  --glow-soft: 308 80% 68%;
+  --glow-pink: 320 90% 65%;
+  --surface-glass: 270 30% 8%;
+  --gold: 45 80% 55%;
+}
+
+:root.light {
+  --background: 270 32% 4%;
+  --foreground: 270 15% 92%;
+  --card: 272 30% 7%;
+  --card-foreground: 270 12% 90%;
+  --popover: 272 30% 7%;
+  --popover-foreground: 270 12% 90%;
+  --primary: 280 88% 65%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 270 22% 12%;
+  --secondary-foreground: 270 15% 85%;
+  --muted: 270 20% 11%;
+  --muted-foreground: 270 10% 52%;
+  --accent: 308 78% 65%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 270 28% 16%;
+  --input: 270 28% 14%;
+  --ring: 280 88% 65%;
+  --sidebar-background: 270 38% 3%;
+  --sidebar-foreground: 270 12% 90%;
+  --sidebar-primary: 280 88% 65%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 270 30% 10%;
+  --sidebar-accent-foreground: 270 12% 90%;
+  --sidebar-border: 270 30% 12%;
+  --sidebar-ring: 280 88% 65%;
+  --glow-primary: 280 100% 70%;
+  --glow-soft: 308 80% 68%;
+  --glow-pink: 320 90% 65%;
+  --surface-glass: 270 30% 8%;
+  --gold: 45 80% 55%;
 }
 
 @layer base {
@@ -65,6 +149,12 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% 0%, hsl(280 80% 20% / 0.35) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 0% 50%, hsl(308 78% 20% / 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 100% 50%, hsl(280 78% 20% / 0.12) 0%, transparent 60%);
+    background-attachment: fixed;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -73,111 +163,348 @@
 }
 
 @layer components {
+  /* ============================================
+     GLASSMORPHISM — DARK PURPLE GLASS
+     ============================================ */
   .glass {
-    @apply bg-card/60 backdrop-blur-xl border border-border/50;
+    background: hsl(var(--surface-glass) / 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid hsl(var(--border) / 0.6);
+    transition: all 0.3s ease;
   }
 
   .glass-strong {
-    @apply bg-card/80 backdrop-blur-2xl border border-border/60;
+    background: hsl(var(--surface-glass) / 0.88);
+    backdrop-filter: blur(32px) saturate(200%);
+    -webkit-backdrop-filter: blur(32px) saturate(200%);
+    border: 1px solid hsl(var(--primary) / 0.15);
+    transition: all 0.3s ease;
   }
 
+  /* ============================================
+     GLOW EFFECTS — DUAL PURPLE + PINK
+     ============================================ */
   .glow-box {
-    box-shadow: 0 0 40px -10px hsl(var(--glow-primary) / 0.3),
-                0 0 80px -20px hsl(var(--glow-primary) / 0.15);
+    box-shadow:
+      0 0 30px -8px hsl(var(--glow-primary) / 0.5),
+      0 0 70px -20px hsl(var(--glow-primary) / 0.25),
+      0 0 120px -40px hsl(var(--glow-pink) / 0.15),
+      inset 0 1px 0 hsl(var(--primary) / 0.12);
   }
 
   .glow-text {
-    text-shadow: 0 0 30px hsl(var(--glow-primary) / 0.5),
-                 0 0 60px hsl(var(--glow-primary) / 0.2);
+    text-shadow:
+      0 0 20px hsl(var(--glow-primary) / 0.8),
+      0 0 50px hsl(var(--glow-primary) / 0.4),
+      0 0 90px hsl(var(--glow-pink) / 0.2);
   }
 
   .glow-border {
-    box-shadow: inset 0 0 0 1px hsl(var(--glow-primary) / 0.2),
-                0 0 20px -5px hsl(var(--glow-primary) / 0.2);
+    box-shadow:
+      inset 0 0 0 1px hsl(var(--primary) / 0.3),
+      0 0 20px -4px hsl(var(--glow-primary) / 0.35),
+      0 0 50px -15px hsl(var(--glow-pink) / 0.2);
   }
 
+  /* Syrup animated glow — breathing purple + pink */
+  .syrup-glow {
+    animation: purple-breathe 3s ease-in-out infinite;
+  }
+
+  /* ============================================
+     GRADIENTS
+     ============================================ */
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--glow-primary)), hsl(var(--glow-soft)));
+    background: linear-gradient(135deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--accent)) 100%
+    );
   }
 
   .gradient-dark {
-    background: linear-gradient(180deg, hsl(240 20% 6%), hsl(240 20% 3%));
+    background: linear-gradient(180deg,
+      hsl(var(--background)) 0%,
+      hsl(270 35% 3%) 100%
+    );
   }
 
+  /* Syrup gradient — thick purple to pink */
+  .gradient-syrup {
+    background: linear-gradient(135deg,
+      #5500aa 0%,
+      #8800cc 35%,
+      #a020f0 65%,
+      #cc00aa 100%
+    );
+  }
+
+  /* Glossy inner highlight for surfaces */
+  .gradient-gloss {
+    background: linear-gradient(180deg,
+      hsl(var(--primary) / 0.12) 0%,
+      transparent 50%,
+      hsl(var(--glow-pink) / 0.05) 100%
+    );
+  }
+
+  /* ============================================
+     LUXURY / SYRUP SURFACE
+     ============================================ */
   .luxury-card {
-    @apply glass rounded-xl overflow-hidden transition-all duration-500;
+    background: hsl(var(--card) / 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid hsl(var(--border) / 0.5);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: all 0.5s ease;
+    position: relative;
+  }
+
+  .luxury-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      hsl(var(--primary) / 0.07) 0%,
+      transparent 40%
+    );
+    pointer-events: none;
+    z-index: 0;
   }
 
   .luxury-card:hover {
-    @apply glow-border;
+    border-color: hsl(var(--primary) / 0.4);
     transform: translateY(-4px);
+    box-shadow:
+      0 20px 50px -10px hsl(var(--glow-primary) / 0.35),
+      0 0 80px -30px hsl(var(--glow-pink) / 0.2),
+      inset 0 1px 0 hsl(var(--primary) / 0.2);
   }
 
+  /* Syrup surface — glossy dark panel */
+  .syrup-surface {
+    background: hsl(var(--card) / 0.9);
+    border: 1px solid hsl(var(--primary) / 0.2);
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 4px 24px hsl(var(--glow-primary) / 0.12),
+      inset 0 1px 0 hsl(var(--primary) / 0.15),
+      inset 0 -1px 0 hsl(var(--glow-pink) / 0.08);
+  }
+
+  .syrup-surface::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      hsl(var(--primary) / 0.6) 30%,
+      hsl(var(--accent) / 0.6) 70%,
+      transparent 100%
+    );
+  }
+
+  /* ============================================
+     SYRUP TEXT GRADIENT
+     ============================================ */
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(0 0% 100%), hsl(var(--glow-primary) / 0.8));
+    background-image: linear-gradient(135deg,
+      hsl(var(--foreground)) 0%,
+      hsl(var(--primary)) 60%
+    );
   }
 
+  .syrup-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg,
+      #c060ff 0%,
+      #e040fb 50%,
+      #ff40cc 100%
+    );
+    filter: drop-shadow(0 0 8px hsl(var(--glow-primary) / 0.5));
+  }
+
+  /* ============================================
+     BUTTONS — SYRUP STYLE
+     ============================================ */
   .btn-luxury {
-    @apply relative overflow-hidden px-8 py-3 rounded-lg font-sans font-semibold text-sm tracking-wider uppercase;
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(263 70% 40%));
+    @apply relative overflow-hidden px-8 py-3 rounded-lg font-sans font-semibold text-sm tracking-wider uppercase text-white;
+    background: linear-gradient(135deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--accent)) 100%
+    );
     transition: all 0.3s ease;
+    box-shadow:
+      0 4px 15px hsl(var(--primary) / 0.4),
+      0 0 30px hsl(var(--glow-primary) / 0.15),
+      inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  .btn-luxury::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -60%;
+    width: 30%;
+    height: 200%;
+    background: linear-gradient(90deg,
+      transparent,
+      rgba(255,255,255,0.25),
+      transparent
+    );
+    transform: skewX(-20deg);
+    animation: syrup-shine 3s ease-in-out infinite;
   }
 
   .btn-luxury:hover {
-    box-shadow: 0 0 30px hsl(var(--glow-primary) / 0.4);
-    transform: translateY(-1px);
+    box-shadow:
+      0 0 30px hsl(var(--glow-primary) / 0.6),
+      0 0 60px hsl(var(--glow-pink) / 0.3),
+      inset 0 1px 0 rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+  }
+
+  .btn-luxury:active {
+    transform: translateY(0);
   }
 
   .btn-ghost-luxury {
-    @apply px-8 py-3 rounded-lg font-sans font-semibold text-sm tracking-wider uppercase border border-border/50 text-foreground/80;
+    @apply px-8 py-3 rounded-lg font-sans font-semibold text-sm tracking-wider uppercase;
+    color: hsl(var(--primary));
+    border: 1px solid hsl(var(--primary) / 0.35);
     transition: all 0.3s ease;
+    background: hsl(var(--primary) / 0.05);
   }
 
   .btn-ghost-luxury:hover {
-    @apply border-primary/50 text-foreground;
-    box-shadow: 0 0 20px hsl(var(--glow-primary) / 0.15);
+    border-color: hsl(var(--primary) / 0.6);
+    background: hsl(var(--primary) / 0.1);
+    box-shadow:
+      0 0 20px hsl(var(--glow-primary) / 0.3),
+      inset 0 0 20px hsl(var(--primary) / 0.05);
+    color: hsl(var(--foreground));
   }
 
+  /* ============================================
+     INPUTS — DARK GLASS
+     ============================================ */
   .input-luxury {
-    @apply w-full px-4 py-3 rounded-lg bg-muted/50 border border-border/50 text-foreground placeholder:text-muted-foreground/50 font-sans text-sm;
+    @apply w-full px-4 py-3 rounded-lg font-sans text-sm;
+    background: hsl(var(--muted) / 0.5);
+    border: 1px solid hsl(var(--border) / 0.6);
+    color: hsl(var(--foreground));
     transition: all 0.3s ease;
   }
 
-  .input-luxury:focus {
-    @apply outline-none border-primary/50;
-    box-shadow: 0 0 20px hsl(var(--glow-primary) / 0.15);
+  .input-luxury::placeholder {
+    color: hsl(var(--muted-foreground) / 0.6);
   }
 
+  .input-luxury:focus {
+    outline: none;
+    border-color: hsl(var(--primary) / 0.6);
+    box-shadow:
+      0 0 0 3px hsl(var(--primary) / 0.1),
+      0 0 20px hsl(var(--glow-primary) / 0.2);
+  }
+
+  /* ============================================
+     STEPPER
+     ============================================ */
   .stepper-line {
     @apply h-0.5 flex-1;
     background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--border)));
   }
 
   .stepper-line-active {
-    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--glow-soft)));
-    box-shadow: 0 0 10px hsl(var(--glow-primary) / 0.3);
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+    box-shadow: 0 0 10px hsl(var(--glow-primary) / 0.4);
   }
 
-  /* Scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
+  /* ============================================
+     LOADING SKELETON
+     ============================================ */
+  .skeleton {
+    background: hsl(var(--muted));
+    background-image: linear-gradient(
+      105deg,
+      hsl(var(--muted)) 0%,
+      hsl(var(--primary) / 0.15) 50%,
+      hsl(var(--muted)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
   }
+
+  /* ============================================
+     DRIP BORDER TOP — decorative top accent
+     ============================================ */
+  .drip-border-top {
+    position: relative;
+  }
+  .drip-border-top::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      hsl(var(--primary)) 30%,
+      hsl(var(--accent)) 70%,
+      transparent 100%
+    );
+    box-shadow: 0 0 12px hsl(var(--glow-primary) / 0.6);
+  }
+
+  /* ============================================
+     SCROLLBAR — purple/magenta
+     ============================================ */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
   ::-webkit-scrollbar-track {
     background: hsl(var(--background));
   }
+
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
+    background: linear-gradient(180deg,
+      hsl(var(--primary) / 0.6),
+      hsl(var(--accent) / 0.6)
+    );
     border-radius: 3px;
   }
+
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--primary) / 0.5);
+    background: linear-gradient(180deg,
+      hsl(var(--primary)),
+      hsl(var(--accent))
+    );
+    box-shadow: 0 0 6px hsl(var(--glow-primary) / 0.5);
   }
 }
 
+/* ============================================
+   KEYFRAME ANIMATIONS
+   ============================================ */
+
+/* Existing */
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px hsl(var(--glow-primary) / 0.2); }
-  50% { box-shadow: 0 0 40px hsl(var(--glow-primary) / 0.4); }
+  0%, 100% {
+    box-shadow:
+      0 0 20px hsl(var(--glow-primary) / 0.2),
+      0 0 50px hsl(var(--glow-pink) / 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 40px hsl(var(--glow-primary) / 0.5),
+      0 0 80px hsl(var(--glow-pink) / 0.25);
+  }
 }
 
 @keyframes float {
@@ -188,4 +515,188 @@
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
+}
+
+@keyframes vault-rotate {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(-180deg); }
+}
+
+@keyframes vault-open {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* NEW: Syrup drip — stem grows downward viscously */
+@keyframes syrup-drip {
+  0%   { height: 0; opacity: 0.9; }
+  60%  { height: var(--drip-h, 80px); opacity: 1; }
+  78%  { height: calc(var(--drip-h, 80px) + 22px); opacity: 1; }
+  92%  { height: calc(var(--drip-h, 80px) + 18px); opacity: 0.95; }
+  100% { height: var(--drip-h, 80px); opacity: 0.9; }
+}
+
+/* NEW: Drop forms at tip and falls */
+@keyframes drip-fall {
+  0%, 52% {
+    transform: scale(1, 0.1) translateY(0);
+    opacity: 0;
+  }
+  65% {
+    transform: scale(1.4, 0.7) translateY(0);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.9, 1.5) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.7, 2.4) translateY(40px);
+    opacity: 0;
+  }
+}
+
+/* NEW: Breathing dual-color purple + pink glow */
+@keyframes purple-breathe {
+  0%, 100% {
+    box-shadow:
+      0 0 25px hsl(var(--glow-primary) / 0.25),
+      0 0 60px hsl(var(--glow-primary) / 0.1),
+      inset 0 0 20px hsl(var(--primary) / 0.05);
+  }
+  50% {
+    box-shadow:
+      0 0 50px hsl(var(--glow-primary) / 0.55),
+      0 0 100px hsl(var(--glow-primary) / 0.25),
+      0 0 140px hsl(var(--glow-pink) / 0.15),
+      inset 0 0 30px hsl(var(--primary) / 0.1);
+  }
+}
+
+/* NEW: Syrup pour — shine sweeps across button */
+@keyframes syrup-shine {
+  0%   { left: -60%; opacity: 0; }
+  20%  { opacity: 1; }
+  60%  { opacity: 1; }
+  100% { left: 130%; opacity: 0; }
+}
+
+/* NEW: Liquid shimmer for cards */
+@keyframes liquid-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* NEW: Corner pool blob — slow expand/contract */
+@keyframes pool-pulse {
+  0%, 100% { transform: scale(1, 1); opacity: 0.85; }
+  50% { transform: scale(1.04, 1.02); opacity: 1; }
+}
+
+/* ============================================
+   UTILITY ANIMATION CLASSES
+   ============================================ */
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-syrup-glow {
+  animation: purple-breathe 3s ease-in-out infinite;
+}
+
+.animate-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--primary) / 0.2),
+    hsl(var(--accent) / 0.15),
+    transparent
+  );
+  animation: shine 2.5s ease-in-out infinite;
+}
+
+/* ============================================
+   VAULT DOOR ANIMATIONS (existing, preserved)
+   ============================================ */
+.vault-door {
+  perspective: 1000px;
+}
+
+.vault-door-left {
+  transform-origin: left center;
+  transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vault-door-right {
+  transform-origin: right center;
+  transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vault-door-left.open {
+  transform: rotateY(-110deg);
+}
+
+.vault-door-right.open {
+  transform: rotateY(110deg);
+}
+
+/* ============================================
+   SYRUP DRIP COMPONENT STYLES
+   ============================================ */
+.syrup-drip-stem {
+  width: 100%;
+  background: linear-gradient(180deg,
+    hsl(var(--primary) / 0.95) 0%,
+    hsl(var(--accent) / 0.9) 80%,
+    hsl(var(--glow-pink) / 0.85) 100%
+  );
+  border-radius: 0 0 4px 4px;
+  filter: blur(0.3px);
+  box-shadow:
+    0 0 8px hsl(var(--glow-primary) / 0.6),
+    0 0 20px hsl(var(--glow-primary) / 0.3);
+  animation: syrup-drip var(--drip-dur, 4s) ease-in-out infinite;
+  animation-delay: var(--drip-delay, 0s);
+}
+
+.syrup-drip-drop {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50% 50% 60% 60% / 40% 40% 60% 60%;
+  background: radial-gradient(ellipse at 35% 35%,
+    hsl(var(--glow-primary) / 0.9) 0%,
+    hsl(var(--primary)) 45%,
+    hsl(var(--accent) / 0.8) 100%
+  );
+  filter: blur(0.5px);
+  box-shadow:
+    0 0 12px hsl(var(--glow-primary) / 0.8),
+    0 0 30px hsl(var(--glow-primary) / 0.4);
+  animation: drip-fall var(--drip-dur, 4s) ease-in-out infinite;
+  animation-delay: var(--drip-delay, 0s);
+  transform-origin: center top;
+}
+
+.syrup-corner-blob {
+  animation: pool-pulse 4s ease-in-out infinite;
 }
